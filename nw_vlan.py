@@ -3,7 +3,7 @@ from function.option import get_option
 from function.dup_check import duplicate_confirmation
 from function.from_config import to_list
 #from function.to_config import to_config
-from function.format_change import to_yaml#, to_json
+from function.format_change import to_yaml, to_json
 
 
 if __name__ == '__main__':
@@ -18,5 +18,7 @@ if __name__ == '__main__':
     convert_data = change.convert()
     if data['action'] == 'back_to_yaml' or data['action'] == 'back_to_flow_yaml':
         result = to_yaml(convert_data, data['action'])
+    elif data['action'] == 'back_to_json':
+        result = to_json(convert_data)
     for i in result:
         print(i)
