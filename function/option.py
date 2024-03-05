@@ -4,10 +4,6 @@ def get_option():
     argparser = ArgumentParser()
     argparser.add_argument('-c', '--config', type=str,
                            default=False, help='Specify this when you want to return the NW device config to list format. If bj/by is not specified, it will be converted to Python list format.')
-    argparser.add_argument('-j', '--json', type=str,
-                           default=False, help='Specify when converting a json list.')
-    argparser.add_argument('-y', '--yaml', type=str,
-                           default=False, help='Specify when converting a yaml list.')
     argparser.add_argument('-f', '--file', type=str,
                            default=False, help='Specify a path if you want to load and run a file containing a newline-separated list of Vlans.')
     argparser.add_argument('-cf', '--config_file', type=str,

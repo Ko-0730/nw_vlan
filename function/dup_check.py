@@ -29,41 +29,35 @@ def duplicate_confirmation(arg):
             data['config'], data['action'] = conf_str, 'back_to_list'
     else:
         data['flag'] = 2
-        if [arg.json, arg.yaml, arg.file, arg.json_file, arg.yaml_file].count(False) < 4:
+        if [arg.file, arg.json_file, arg.yaml_file].count(False) < 2:
             rc, message = 1, 'Cannot execute because the options are duplicated.'
             return rc, message, data
-        elif [arg.json, arg.yaml, arg.file, arg.json_file, arg.yaml_file].count(False) == 5:
+        elif [arg.file, arg.json_file, arg.yaml_file].count(False) == 3:
             rc, message = 1, 'No options specified.'
             return rc, message, data
-        elif arg.json or arg.json_file:
-            if arg.json_file:
-                try:
-                    with open(arg.json_file) as f:
-                        try:
-                            conf_str = json.load(f)
-                        except:
-                            rc, message = 1, 'Incorrect file format.'
-                            return rc, message, data
-                except:
-                    rc, message = 1, 'File not found.'
-                    return rc, message, data
-            else:
-                conf_str = arg.json
+        elif arg.json_file:
+            try:
+                with open(arg.json_file) as f:
+                    try:
+                        conf_str = json.load(f)
+                    except:
+                        rc, message = 1, 'Incorrect file format.'
+                        return rc, message, data
+            except:
+                rc, message = 1, 'File not found.'
+                return rc, message, data
             data['config'], data['action'] = conf_str, 'list_to_config'
-        elif arg.yaml or arg.yaml_file:
-            if arg.yaml_file:
-                try:
-                    with open(arg.yaml_file) as f:
-                        try:
-                            conf_str = yaml.safe_load(f)
-                        except:
-                            rc, message = 1, 'The data structure is incorrect.'
-                            return rc, message, data
-                except:
-                    rc, message = 1, 'File not found.'
-                    return rc, message, data
-            else:
-                conf_str = arg.yaml
+        elif arg.yaml_file:
+            try:
+                with open(arg.yaml_file) as f:
+                    try:
+                        conf_str = yaml.safe_load(f)
+                    except:
+                        rc, message = 1, 'The data structure is incorrect.'
+                        return rc, message, data
+            except:
+                rc, message = 1, 'File not found.'
+                return rc, message, data
             data['config'], data['action'] = conf_str, 'list_to_config'
         else:
             try:
