@@ -69,10 +69,15 @@ def duplicate_confirmation(arg):
             try:
                 with open(arg.file) as f:
                     try:
-                        conf_str = list(f.read())
+                        tmplist = f.readlines()
                     except:
                         rc, message = 1, 'The data structure is incorrect.'
                         return rc, message, data
+                    else:
+                        conf_str = []
+                        for tmp_str in tmplist:
+                            conv_str = tmp_str.replace('[', '').replace(']', '')
+                            conf_str.append([int(a) for a in conv_str.split(',')])
             except:
                 rc, message = 1, 'File not found.'
                 return rc, message, data

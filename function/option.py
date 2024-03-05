@@ -9,7 +9,7 @@ def get_option():
     argparser.add_argument('-y', '--yaml', type=str,
                            default=False, help='Specify when converting a yaml list.')
     argparser.add_argument('-f', '--file', type=str,
-                           default=False, help='Specify the path if you want to load and execute a file containing Vlans separated by line breaks.')
+                           default=False, help='Specify a path if you want to load and run a file containing a newline-separated list of Vlans.')
     argparser.add_argument('-cf', '--config_file', type=str,
                            default=False, help='When you want to convert the NW device config back to list format, specify the file that contains the config you want to convert. If bj/by is not specified, it will be converted to Python list format.')
     argparser.add_argument('-jf', '--json_file', type=str,
