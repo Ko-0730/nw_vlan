@@ -8,25 +8,30 @@ NW機器のVLAN設定を効率的に管理するためのPythonスクリプト�
 ## 動作確認環境
 Python 3.12.2
 
+## 解決されたIssue
+*   Issue #1: `dup_check.py`におけるオプション重複チェックロジックの改善とエラーメッセージの具体化
+*   Issue #2: `from_config.py`におけるVLANリスト処理の最適化と明確化
+*   Issue #3: `to_config.py`におけるVLAN範囲変換ロジックの簡素化と可読性の向上
+*   Issue #4: 全体的なエラーハンドリングとメッセージの改善
+
 ## インストール
 
-1.  リポジトリをクローンします。
+このツールは`pip`でインストールできます。
+
+1.  **pipでインストール**:
+    ```bash
+    pip install .
+    ```
+    または、リポジトリをクローンしてインストールすることもできます。
     ```bash
     git clone https://github.com/Ko-0730/nw_vlan.git
-    ```
-2.  クローンしたディレクトリに移動します。
-    ```bash
     cd nw_vlan
+    pip install .
     ```
-3.  必要なパッケージをインストールします。（初回のみ）
-    ```bash
-    python3 -m pip install -r requirements.txt
-    ```
-    `requirements.txt`には、`PyYAML`が含まれています。
 
 ## 使い方
 
-`nw_vlan.py`スクリプトは、コマンドライン引数を使用して様々な操作を実行します。
+`nw_vlan`コマンドは、コマンドライン引数を使用して様々な操作を実行します。
 
 ### 1. NW機器のコンフィグ形式VLANをリストに変換する
 
@@ -35,37 +40,37 @@ NW機器のコンフィグ形式（例: "1-3,5,7-9"）のVLANを、Pythonリス�
 *   **コマンドラインから直接指定する場合**: `-c` オプションを使用します。
     *   Pythonリスト形式:
         ```bash
-        python3 nw_vlan.py -c "1-3,5-7"
+        nw_vlan -c "1-3,5-7"
         ```
     *   JSONリスト形式:
         ```bash
-        python3 nw_vlan.py -c "1-3,5-7" -bj
+        nw_vlan -c "1-3,5-7" -bj
         ```
     *   YAMLリスト形式:
         ```bash
-        python3 nw_vlan.py -c "1-3,5-7" -by
+        nw_vlan -c "1-3,5-7" -by
         ```
     *   FlowスタイルのYAMLリスト形式:
         ```bash
-        python3 nw_vlan.py -c "1-3,5-7" -bfy
+        nw_vlan -c "1-3,5-7" -bfy
         ```
 
 *   **ファイルから読み込む場合**: `-cf` オプションを使用します。
     *   Pythonリスト形式:
         ```bash
-        python3 nw_vlan.py -cf {filename}
+        nw_vlan -cf {filename}
         ```
     *   JSONリスト形式:
         ```bash
-        python3 nw_vlan.py -cf {filename} -bj
+        nw_vlan -cf {filename} -bj
         ```
     *   YAMLリスト形式:
         ```bash
-        python3 nw_vlan.py -cf {filename} -by
+        nw_vlan -cf {filename} -by
         ```
     *   FlowスタイルのYAMLリスト形式:
         ```bash
-        python3 nw_vlan.py -cf {filename} -bfy
+        nw_vlan -cf {filename} -bfy
         ```
 
 ### 2. リスト形式のVLANをNW機器のコンフィグ形式に変換する
@@ -74,15 +79,15 @@ Pythonリスト、YAML、またはJSON形式のVLANリストを、NW機器のコ
 
 *   **Pythonリストファイルから読み込む場合**: `-f` オプションを使用します。
     ```bash
-    python3 nw_vlan.py -f {filename}
+    nw_vlan -f {filename}
     ```
 *   **YAMLリストファイルから読み込む場合**: `-yf` オプションを使用します。
     ```bash
-    python3 nw_vlan.py -yf {filename}
+    nw_vlan -yf {filename}
     ```
 *   **JSONリストファイルから読み込む場合**: `-jf` オプションを使用します。
     ```bash
-    python3 nw_vlan.py -jf {filename}
+    nw_vlan -jf {filename}
     ```
 
 ## オプション一覧
@@ -95,12 +100,13 @@ Pythonリスト、YAML、またはJSON形式のVLANリストを、NW機器のコ
 *   `-bj`: 出力形式をJSONリストにします。
 *   `-by`: 出力形式をYAMLリストにします。
 *   `-bfy`: 出力形式をFlowスタイルのYAMLリストにします。
+*   `--debug`: エラー発生時に詳細なスタックトレースを出力します。
 
 ## 実行例
 
 ### 例1: コンフィグファイルからYAMLリストへの変換
 
-`testfile/config_vlan.txt` の内容:
+`examples/data/config_vlan.txt` の内容:
 ```
 1-3,5-9,11
 2-4,6-11,13-29
@@ -108,7 +114,7 @@ Pythonリスト、YAML、またはJSON形式のVLANリストを、NW機器のコ
 
 コマンド:
 ```bash
-% python3 nw_vlan.py -by -cf testfile/config_vlan.txt
+% nw_vlan -by -cf examples/data/config_vlan.txt
 ```
 
 出力:
@@ -152,7 +158,7 @@ Pythonリスト、YAML、またはJSON形式のVLANリストを、NW機器のコ
 
 ### 例2: YAMLリストファイルからコンフィグ形式への変換
 
-`testfile/yaml_list` の内容:
+`examples/data/yaml_list` の内容:
 ```yaml
 - 1
 - 2
@@ -163,7 +169,7 @@ Pythonリスト、YAML、またはJSON形式のVLANリストを、NW機器のコ
 
 コマンド:
 ```bash
-% python3 nw_vlan.py -yf testfile/yaml_list
+% nw_vlan -yf examples/data/yaml_list
 ```
 
 出力:
@@ -173,14 +179,14 @@ Pythonリスト、YAML、またはJSON形式のVLANリストを、NW機器のコ
 
 ### 例3: Pythonリストファイルからコンフィグ形式への変換 (新規追加)
 
-`testfile/pylist.py` の内容:
+`examples/data/pylist.py` の内容:
 ```python
 [10, 20, 21, 22, 30]
 ```
 
 コマンド:
 ```bash
-% python3 nw_vlan.py -f testfile/pylist.py
+% nw_vlan -f examples/data/pylist.py
 ```
 
 出力:
@@ -190,14 +196,14 @@ Pythonリスト、YAML、またはJSON形式のVLANリストを、NW機器のコ
 
 ### 例4: JSONリストファイルからコンフィグ形式への変換 (新規追加)
 
-`testfile/json_list` の内容:
+`examples/data/json_list` の内容:
 ```json
 [100, 101, 102, 105]
 ```
 
 コマンド:
 ```bash
-% python3 nw_vlan.py -jf testfile/json_list
+% nw_vlan -jf examples/data/json_list
 ```
 
 出力:

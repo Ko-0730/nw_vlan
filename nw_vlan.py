@@ -7,7 +7,7 @@ from function.to_config import to_config
 from function.format_change import to_yaml, to_json
 
 
-if __name__ == '__main__':
+def main():
     args = get_option()
     rc, message, data = duplicate_confirmation(args)
     if not rc == 0:
@@ -36,3 +36,6 @@ if __name__ == '__main__':
         if args.debug:
             traceback.print_exc()
         exit(1)
+
+if __name__ == '__main__':
+    main()
