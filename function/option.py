@@ -18,4 +18,6 @@ def get_option():
                            action='store_true', help='Convert vlan in config format back to yaml.')
     argparser.add_argument('-bfy', '--back_to_flow_yaml',
                            action='store_true', help='Convert vlan in config format back to flow style yaml.')
+    argparser.add_argument('--debug', action='store_true',
+                           help='Enable debug output including stack traces on error.')
     return argparser.parse_args()
