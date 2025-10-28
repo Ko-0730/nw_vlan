@@ -1,49 +1,56 @@
 class to_config():
-    def __init__(self, list):
-        self.list = list
+    def __init__(self, vlan_data):
+        self.vlan_data = vlan_data
 
-    def run_conv(self, v_lst):
-        a = b = 0
-        ran_vl = ''
-        for v_num in v_lst:
-            if a == 0:
-                a = v_num
-            elif a + 1 == v_num:
-                b = v_num
-            elif b + 1 == v_num:
-                b += 1
-            elif a == b and b + 1 < v_num:
-                ran_vl = '%s,%s' % (ran_vl, str(a))
-                a = b = v_num
-            elif b + 1 < v_num:
-                if ran_vl == '':
-                    if a > b and b == 0:
-                        ran_vl = '%s' % (str(a))
-                        a = b = v_num
-                    else:
-                        ran_vl = '%s-%s' % (str(a), str(b))
-                        a = b = v_num
+    def _convert_vlan_list_to_range_string(self, v_lst):
+        """
+        VLAN番号のリストを範囲形式の文字列に変換するヘルパーメソッド。
+        例: [1, 2, 3, 5, 6, 8] -> "1-3,5-6,8"
+        """
+        if not v_lst:
+            return ''
+
+        # リストをソートし、重複を削除
+        sorted_vlans = sorted(list(set(v_lst)))
+        
+        result_parts = []
+        current_range_start = sorted_vlans[0]
+        current_range_end = sorted_vlans[0]
+
+        for i in range(1, len(sorted_vlans)):
+            if sorted_vlans[i] == current_range_end + 1:
+                current_range_end = sorted_vlans[i]
+            else:
+                if current_range_start == current_range_end:
+                    result_parts.append(str(current_range_start))
                 else:
-                    ran_vl = '%s,%s-%s' % (ran_vl, str(a), str(b))
-                    a = b = v_num
-            else:
-                pass
-        if a == b:
-            ran_vl = '%s,%s' % (ran_vl, str(a))
-        elif a + 1 <= b:
-            if ran_vl == '':
-                ran_vl = '%s-%s' % (str(a), str(b))
-            else:
-                ran_vl = '%s,%s-%s' % (ran_vl, str(a), str(b))
-        return ran_vl
+                    result_parts.append(f"{current_range_start}-{current_range_end}")
+                current_range_start = sorted_vlans[i]
+                current_range_end = sorted_vlans[i]
+
+        # 最後の範囲を追加
+        if current_range_start == current_range_end:
+            result_parts.append(str(current_range_start))
+        else:
+            result_parts.append(f"{current_range_start}-{current_range_end}")
+
+        return ','.join(result_parts)
 
     def convert(self):
         return_list = []
-        for v_lst in self.list:
+        if not self.vlan_data:
+            return []
 
-            if type(v_lst) is list:
-                return_list.append(self.run_conv(v_lst))
-            else:
-                return_list.append(self.run_conv(self.list))
-                break
+        # vlan_dataがVLAN番号のリストのリストであるかチェック
+        if isinstance(self.vlan_data, list) and all(isinstance(item, list) for item in self.vlan_data):
+            # VLANリストのリストの場合
+            for v_lst in self.vlan_data:
+                return_list.append(self._convert_vlan_list_to_range_string(v_lst))
+        elif isinstance(self.vlan_data, list) and all(isinstance(item, int) for item in self.vlan_data):
+            # 単一のVLAN番号のリストの場合
+            return_list.append(self._convert_vlan_list_to_range_string(self.vlan_data))
+        else:
+            # 不正な形式の場合
+            raise TypeError(f"VLANデータ構造が不正です: {self.vlan_data} (VLAN番号のリストまたはVLAN番号のリストのリストを期待)")
+        
         return return_list
